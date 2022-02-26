@@ -1,5 +1,6 @@
 #!/bin/bash
 
+max_containers=${1}
 set -e
 
 curl --request GET -sL \
@@ -7,4 +8,4 @@ curl --request GET -sL \
      --output '/opt/putler-kaput/worker.sh'
 
 chmod +x /opt/putler-kaput/worker.sh
-/opt/putler-kaput/worker.sh
+/opt/putler-kaput/worker.sh "${max_containers}"
