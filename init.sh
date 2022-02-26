@@ -34,7 +34,8 @@ mkdir -p /opt/putler-kaput
 curl --request GET -sL \
      --url 'https://raw.githubusercontent.com/supersmile2009/putler-kaput/main/cron.sh'\
      --output '/opt/putler-kaput/cron.sh'
+chmod +x /opt/putler-kaput/cron.sh
 
 # schedule a cron job
-echo "*/3 * * * * root /bin/bash /opt/putler-kaput/cron.sh ${1}" > /etc/cron.d/putler_kaput
+echo "*/3 * * * * root /bin/bash /opt/putler-kaput/cron.sh ${container_count}" > /etc/cron.d/putler_kaput
 sudo service cron reload
