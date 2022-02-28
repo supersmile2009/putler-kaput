@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 container_count="${1}"
 
 # Using Docker CE directly provided by Docker
@@ -26,7 +28,6 @@ sudo docker swarm init --listen-addr 127.0.0.1
 
 
 # install bash-commons
-/usr/bin/cloud-init status --wait
 sudo mkdir -p /opt/gruntwork
 git clone --branch v0.1.9 https://github.com/gruntwork-io/bash-commons.git /tmp/bash-commons
 sudo cp -r /tmp/bash-commons/modules/bash-commons/src /opt/gruntwork/bash-commons
