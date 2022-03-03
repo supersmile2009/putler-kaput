@@ -6,8 +6,7 @@ RUN apk --no-cache update && \
     apk --no-cache add \
         ca-certificates \
         curl \
-        libssl1.1 \
-        ldns
+        libssl1.1
 
 # Install bombardier
 COPY --from=alpine/bombardier:latest /gopath/bin/bombardier /bin/bombardier
@@ -19,7 +18,6 @@ COPY --from=nitupkcuf/ddos-ripper:latest /app/DRipper.py /opt/ddos-ripper/DRippe
 
 # Install DNSPerf
 # TODO: compile as a separate stage
-# TODO: ck and ck-dev are only available in testing repo in alpine edge
 #ENV DNSPERF_VERSION 2.9.0
 #RUN apk add --no-cache \
 #        bind \
@@ -48,25 +46,14 @@ COPY --from=nitupkcuf/ddos-ripper:latest /app/DRipper.py /opt/ddos-ripper/DRippe
 #    gunzip queryfile-example-current.gz &&\
 #    mv queryfile-example-current queryfile
 
+
 # Install and enable pcntl
 # TODO: compile as a separate stage and copy xdebug.so file from it
 RUN apk add --no-cache $PHPIZE_DEPS
 RUN docker-php-ext-install pcntl \
     && docker-php-ext-enable pcntl
-# Enable XDebug
-# TODO: compile as a separate stage and copy xdebug.so file from it
-RUN pecl install xdebug-3.1.3 \
-    && docker-php-ext-enable xdebug &&\
-    { \
-        echo 'zend_extension=xdebug'; \
-        echo; \
-        echo '[xdebug]'; \
-        echo 'xdebug.mode=debug'; \
-        echo 'xdebug.client_host=host.docker.internal'; \
-        echo 'xdebug.start_with_request=yes'; \
-    } | tee /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-ENV PHP_IDE_CONFIG="serverName=putler-kaput-docker"
 
+COPY . /app
 COPY --from=nitupkcuf/ddos-ripper:latest /app/headers.txt /app/headers.txt
 
 WORKDIR /app

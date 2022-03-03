@@ -59,6 +59,7 @@ class RunClientCommand extends Command
     {
         pcntl_async_signals(true);
         pcntl_signal(SIGTERM, [$this, 'handleSignal']);
+        pcntl_signal(SIGINT, [$this, 'handleSignal']);
     }
 
 
