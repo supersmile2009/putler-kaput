@@ -152,7 +152,7 @@ class RunClientCommand extends Command
             return;
         }
         $payloadArr = json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
-        $payloadArr = array_filter($payloadArr, static fn(array $taskArr) => $taskArr['enabled'] && $taskArr['app'] !== 'dnsperf');
+        $payloadArr = array_filter($payloadArr, static fn(array $taskArr) => $taskArr['enabled']);
         $tasks = array_map(
             static fn(array $taskArr) => Task::fromArray($taskArr),
             $payloadArr
