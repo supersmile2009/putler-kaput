@@ -1,0 +1,17 @@
+version: "3"
+services:
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 60 --label-enable
+  putler-kaput:
+    image: supersmile2009/putler-kaput:latest
+    container_name: putler-kaput
+    command:
+      - "-c2"
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+    environment:
+      APP_ENV: "prod"
+      APP_DEBUG: "false"
