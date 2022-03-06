@@ -26,6 +26,7 @@ use function array_pop;
 use function json_decode;
 use function pcntl_async_signals;
 use function pcntl_signal;
+use function shuffle;
 use function sprintf;
 use function usleep;
 use const SIGTERM;
@@ -167,7 +168,9 @@ class RunClientCommand extends Command
 
     private function pushToQueue(): void
     {
-        $this->queue = array_merge($this->currentTasks, $this->queue);
+        $newBatch = $this->currentTasks;
+        shuffle($newBatch);
+        $this->queue = array_merge($newBatch, $this->queue);
     }
 
     private function stop(): void
