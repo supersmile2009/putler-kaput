@@ -29,4 +29,4 @@ if [ "${1#-}" != "$1" ] || [ "${1}" = "" ]; then
 	set -- /usr/local/bin/php /app/bin/console app:client:run "$@"
 fi
 
-echo "$@"
+exec "$@"
