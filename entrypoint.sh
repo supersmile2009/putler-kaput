@@ -23,7 +23,11 @@ if [ "${1#-}" != "$1" ] || [ "${1}" = "" ]; then
   done
   if [ "${c_opt_found}" = "false" ]; then
     max_proc=$(getMaxConcurrentProc)
-    set -- "-c${max_proc}" "$@"
+    if [ "${1}" = "" ]; then
+      set -- "-c${max_proc}"
+    else
+      set -- "-c${max_proc}" "$@"
+    fi
   fi
 
 	set -- /usr/local/bin/php /app/bin/console app:client:run "$@"
