@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\AppRunner;
 
+use App\Struct\Task;
 use Symfony\Component\Process\Process;
 use function microtime;
 
 // TODO: separate execution logic implementation in a separate "Executor" and use composition
 abstract class AbstractRunner implements AppRunner
 {
-    public const DURATION_SEC = 60;
     protected Process $proc;
+    protected Task $task;
 
     public function stop(): void
     {
@@ -20,7 +21,7 @@ abstract class AbstractRunner implements AppRunner
 
     public function isCompleted(): bool
     {
-        if ($this->proc->getStartTime() + self::DURATION_SEC + 2 < microtime(true)) {
+        if ($this->proc->getStartTime() + $this->task->durationSecs + 2 < microtime(true)) {
             $this->stop();
         }
 

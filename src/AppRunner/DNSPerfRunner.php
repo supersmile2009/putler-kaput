@@ -11,8 +11,7 @@ use function fwrite;
 
 class DNSPerfRunner extends AbstractRunner
 {
-    private array $args = ['-c', '1', '-S', '1', '-Q', '10000', '-l', '60', '-d', '/opt/queryfile'];
-    private Task $task;
+    private array $args = ['-c', '1', '-S', '1', '-Q', '10000', '-d', '/opt/queryfile'];
 
     public function __construct(Task $task)
     {
@@ -21,7 +20,7 @@ class DNSPerfRunner extends AbstractRunner
 
     public function run(): void
     {
-        $args = ['/bin/dnsperf', '-s', $this->task->host, '-p', $this->task->port, ...$this->args];
+        $args = ['/bin/dnsperf', '-s', $this->task->host, '-p', $this->task->port, '-l', $this->task->durationSecs, ...$this->args];
         $this->proc = new Process(command: $args, timeout: 0.0);
         $this->proc->start(function ($type, $data) {
             if ($type === Process::ERR) {

@@ -67,3 +67,5 @@ Value is the Task object. Task object properties:
 `app` - enum string, one of `bombardier`, `dripper`, `dnsperf`. Other apps may be added in the future.
 
 `enabled` - bool. Task will be ignored if set to false.
+
+`durationSecs` - int. How long a single run of the task should last, amount of time in seconds.

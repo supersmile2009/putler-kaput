@@ -18,12 +18,13 @@ class Task
      */
     public array $commandArgs;
     public string $host;
+    public int $durationSecs;
     public int $port;
 
     /**
      * @param list<string> $commandArgs
      */
-    public function __construct(TaskDriver $driver, TaskApp $app, array $commandArgs, string $host, int $port)
+    public function __construct(TaskDriver $driver, TaskApp $app, array $commandArgs, string $host, int $port, int $durationSecs)
     {
         $this->driver = $driver;
         $this->app = $app;
@@ -32,6 +33,7 @@ class Task
         $this->port = $port;
         $id = implode('_', [$driver->name, $app->name, $host, $port, implode($commandArgs)]);
         $this->id = $id;
+        $this->durationSecs = $durationSecs;
     }
 
     public static function fromArray(array $data)
@@ -42,6 +44,7 @@ class Task
             $data['args'] ?? [],
             $data['host'],
             $data['port'],
+            $data['durationSecs'],
         );
     }
 }

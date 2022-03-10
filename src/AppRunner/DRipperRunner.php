@@ -8,10 +8,11 @@ use App\Struct\Task;
 use Symfony\Component\Process\Process;
 use function fopen;
 use function fwrite;
+use function microtime;
 
 class DRipperRunner extends AbstractRunner
 {
-    private Task $task;
+    private bool $stopRequested = false;
 
     public function __construct(Task $task)
     {
@@ -28,5 +29,18 @@ class DRipperRunner extends AbstractRunner
                 fwrite(fopen('php://stdout', 'wb+'), $data);
             }
         });
+    }
+
+    public function isCompleted(): bool
+    {
+        // TODO: use Swoole timer
+        if (!$this->stopRequested && $this->proc->getStartTime() + $this->task->durationSecs < microtime(true)) {
+            $this->stopRequested = true;
+            if ($this->proc->isRunning()) {
+                $this->proc->signal(15);
+            }
+        }
+
+        return parent::isCompleted();
     }
 }

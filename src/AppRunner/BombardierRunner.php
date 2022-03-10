@@ -11,8 +11,7 @@ use function fwrite;
 
 class BombardierRunner extends AbstractRunner
 {
-    private array $args = ['-c', '1000', '-d', self::DURATION_SEC.'s', '-t', '2s', '-p', 'i,r', '--http1', '--insecure'];
-    private Task $task;
+    private array $args = ['-c', '1000', '-t', '2s', '-p', 'i,r', '--http1', '--insecure'];
 
     public function __construct(Task $task)
     {
@@ -39,6 +38,6 @@ class BombardierRunner extends AbstractRunner
             $url .= ':'.$this->task->port;
         }
 
-        return ['/bin/bombardier', ...$this->args, $url];
+        return ['/bin/bombardier', '-d', $this->task->durationSecs.'s', ...$this->args, $url];
     }
 }
