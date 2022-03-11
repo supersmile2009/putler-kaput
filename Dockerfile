@@ -77,9 +77,8 @@ RUN apk add --no-cache $PHPIZE_DEPS
 RUN docker-php-ext-install pcntl \
     && docker-php-ext-enable pcntl
 
-COPY . /app
-COPY --from=nitupkcuf/ddos-ripper:latest /app/headers.txt /app/headers.txt
-RUN rm /app/queryfile-example-current.gz
+COPY ./app /app
+COPY entrypoint.sh /app/
 
 WORKDIR /app
 

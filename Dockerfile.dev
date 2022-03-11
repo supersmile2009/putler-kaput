@@ -91,9 +91,8 @@ RUN pecl install xdebug \
     } | tee /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 ENV PHP_IDE_CONFIG="serverName=putler-kaput-docker"
 
-COPY --from=nitupkcuf/ddos-ripper:latest /app/headers.txt /app/headers.txt
-
 WORKDIR /app
+COPY entrypoint.sh /
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD [""]
