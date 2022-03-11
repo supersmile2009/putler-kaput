@@ -69,3 +69,5 @@ Value is the Task object. Task object properties:
 `enabled` - bool. Task will be ignored if set to false.
 
 `durationSecs` - int. How long a single run of the task should last, amount of time in seconds.
+
+`args` - app-specific command-line arguments. So far used only for DRipper. See [DRipper repo](https://github.com/alexmon1989/russia_ddos) for details.
