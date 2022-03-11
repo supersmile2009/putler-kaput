@@ -1,5 +1,8 @@
 FROM php:8.1-cli-alpine
 
+# Install and enable pcntl
+RUN docker-php-ext-install pcntl
+
 # Install basic dependencies
 RUN apk --no-cache update && \
     apk --no-cache upgrade && \
@@ -32,29 +35,33 @@ RUN mkdir -p /tmp/dripper &&\
     rm -rf /tmp/dripper
 
 # Install DNSPerf
-# TODO: compile as a separate stage
-ENV DNSPERF_VERSION 2.9.0
-RUN apk add --no-cache \
-    bind \
-    bind-dev \
-    g++ \
-    json-c-dev \
-    krb5-dev \
-    libcap-dev \
-    libxml2-dev \
-    make \
-    autoconf \
-    automake \
-    libtool \
-    pkgconfig \
-    openssl-dev \
-    nghttp2-dev \
-    ldns-dev
 # ck and ck-dev are only available in testing repo in alpine edge
-RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing \
-    ck \
-    ck-dev
-RUN mkdir -p /tmp/build/                                                      &&\
+ARG DNSPERF_VERSION=2.9.0
+RUN apk add --no-cache \
+        openssl \
+        nghttp2 \
+        ldns &&\
+    apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing \
+        ck
+RUN apk add --no-cache --virtual .dnsperf-build \
+        bind \
+        bind-dev \
+        g++ \
+        json-c-dev \
+        krb5-dev \
+        libcap-dev \
+        libxml2-dev \
+        make \
+        autoconf \
+        automake \
+        libtool \
+        pkgconfig \
+        openssl-dev \
+        nghttp2-dev \
+        ldns-dev &&\
+    apk add --no-cache --virtual .dnsperf-build2 --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing \
+        ck-dev &&\
+    mkdir -p /tmp/build/                                                      &&\
     curl https://www.dns-oarc.net/files/dnsperf/dnsperf-${DNSPERF_VERSION}.tar.gz \
       -o /tmp/build/dnsperf-${DNSPERF_VERSION}.tar.gz &&\
     tar -zxf /tmp/build/dnsperf-${DNSPERF_VERSION}.tar.gz \
@@ -62,20 +69,16 @@ RUN mkdir -p /tmp/build/                                                      &&
     cd /tmp/build/dnsperf-${DNSPERF_VERSION}/                         &&\
     ./configure --prefix=/                                                &&\
     make install                                                          &&\
+    make clean distclean &&\
     cd /tmp                                                               &&\
-    rm -rf /tmp/build
+    rm -rf /tmp/build &&\
+    apk del --no-network .dnsperf-build .dnsperf-build2
 
 # Download sample query file
 COPY ./queryfile-example-current.gz /opt/queryfile-example-current.gz
 RUN cd /opt &&\
     gunzip queryfile-example-current.gz &&\
     mv queryfile-example-current queryfile
-
-# Install and enable pcntl
-# TODO: compile as a separate stage and copy xdebug.so file from it
-RUN apk add --no-cache $PHPIZE_DEPS
-RUN docker-php-ext-install pcntl \
-    && docker-php-ext-enable pcntl
 
 COPY ./app /app
 COPY entrypoint.sh /app/
