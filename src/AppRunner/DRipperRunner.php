@@ -17,7 +17,18 @@ class DRipperRunner extends AbstractRunner
     public function __construct(Task $task)
     {
         $this->task = $task;
-        $args = ['/usr/bin/python3', '-u', '/opt/ddos-ripper/DRipper.py', '-s', $this->task->host, '-p', $this->task->port, '-t', '135'];
+        $args = [
+            '/usr/bin/python3',
+            '-u',
+            '/opt/dripper/DRipper.py',
+            '-s',
+            $this->task->host,
+            '-p',
+            $this->task->port,
+            '-t',
+            '150',
+            ...$this->task->commandArgs,
+        ];
         $this->proc = new Process(command: $args, timeout: 0.0);
     }
     public function run(): void

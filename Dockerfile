@@ -14,7 +14,22 @@ COPY --from=alpine/bombardier:latest /gopath/bin/bombardier /bin/bombardier
 # Install Python 3
 RUN apk add --no-cache python3 py3-pip
 # Install DDoS Ripper
-COPY --from=nitupkcuf/ddos-ripper:latest /app/DRipper.py /opt/ddos-ripper/DRipper.py
+ARG DRIPPER_VERSION=1.3.9
+RUN mkdir -p /tmp/dripper &&\
+    curl -sL https://github.com/alexmon1989/russia_ddos/archive/refs/tags/${DRIPPER_VERSION}.tar.gz \
+      -o /tmp/dripper/dripper.tar.gz &&\
+    tar -zxf /tmp/dripper/dripper.tar.gz \
+      -C /tmp/dripper/ &&\
+    mkdir -p /opt/dripper &&\
+    mv \
+      /tmp/dripper/russia_ddos-${DRIPPER_VERSION}/DRipper.py \
+      /tmp/dripper/russia_ddos-${DRIPPER_VERSION}/requirements.txt \
+      /tmp/dripper/russia_ddos-${DRIPPER_VERSION}/ripper \
+      /opt/dripper/ &&\
+    pip install --upgrade pip &&\
+    pip install -r /opt/dripper/requirements.txt &&\
+    rm -rf /opt/dripper/requirements.txt &&\
+    rm -rf /tmp/dripper
 
 # Install DNSPerf
 # TODO: compile as a separate stage
